@@ -1,6 +1,10 @@
 <?php
 
+use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\Dashboard\DashboardController;
 use Illuminate\Support\Facades\Route;
+
+use function PHPUnit\Framework\callback;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,10 +17,17 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/dashboard', function () {
-    return view('dashboard.dashboard');
+Route::get('/', function () {
+    return view('welcome');
 });
+
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->middleware('auth')
+    ->name('dashboard');
 
 Route::get('/store', function () {
     return view('store.home');
 });
+
+Route::get('/checkout', [CheckoutController::class, 'create'])
+    ->name('checkout');

@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Broadcast;
 |
 */
 
-Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
+// I here change name of channel according to receivesBroadcastNotificationsOn() method in User model
+Broadcast::channel('Notifications.{id}', function ($user, $id) {
     return (int) $user->id === (int) $id;
 });
