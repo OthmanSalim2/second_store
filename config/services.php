@@ -33,4 +33,10 @@ return [
 
     'sms_from' => env('VONAGE_SMS_FROM'),
 
+    'paypal' => [
+        'mode' => 'sandbox',
+        'client_id' => env('PAYPAL_CLIENT_ID'),
+        'client_secret' => env('PAYPAL_CLIENT_SECRET'),
+    ],
+
 ];

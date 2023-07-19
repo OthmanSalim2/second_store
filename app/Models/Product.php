@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\App;
+use NumberFormatter;
 
 class Product extends Model
 {
@@ -14,7 +16,7 @@ class Product extends Model
         return $this->belongsTo(Category::class);
     }
 
-    public function order()
+    public function orders()
     {
         return $this->belongsToMany(
             Order::class,
@@ -22,21 +24,33 @@ class Product extends Model
             'product_id',
             'order_id',
             'id',
-            'id',
+            'id'
         )
             ->withPivot([
                 'price', 'quantity', 'product_name'
             ])
-            // we use using() method when be pivot table has a model
             ->using(OrderItem::class)
-            // this's for change standard name of laravel it's was pivot I put it item
             ->as('item');
     }
+
+    // permalink
+    public function getPermalinkAttribute()
+    {
+        return route('products.show', $this->slug);
+    }
+
+    // purchase_price
+    public function getPurchasePriceAttribute()
+    {
+        if ($this->sale_price) {
+            return $this->sale_price;
+        }
+        return $this->price;
+    }
+
+    public function getFormattedPurchasePriceAttribute()
+    {
+        $formatter = new NumberFormatter(App::currentLocale(), NumberFormatter::CURRENCY);
+        $formatter->formatCurrency($this->purchase_price, 'USD');
+    }
 }
-
-// $product = Product::find(1);
-
-// foreach($product->orders as $order) {
-    // this way for access to felid in pivot table
-//     echo $order->item->price;
-// }

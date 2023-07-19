@@ -18,6 +18,8 @@ class OrderItem extends Pivot
 
     public $incrementing = true;
 
+    public $timestamps = false;
+
     public function order()
     {
         return $this->belongsTo(Order::class);

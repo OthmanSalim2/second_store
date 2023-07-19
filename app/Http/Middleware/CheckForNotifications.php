@@ -4,26 +4,25 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 class CheckForNotifications
 {
     /**
      * Handle an incoming request.
      *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Closure  $next
+     * @return mixed
      */
-    public function handle(Request $request, Closure $next): Response
+    public function handle(Request $request, Closure $next)
     {
         $notify_id = $request->query('notify_id');
         if ($notify_id) {
-            $user = $request->user(); // Auth::user()
+            $user = $request->user(); // Auth::user();
 
-            // this's for collection of notification
-            // mark all user's notification as read and store date in read_at in notification table
-            // $user->notifications->markAsRead();
+            // Mark all user's notifications as read
+            //$user->notifications->markAsRead();
 
-            // this's for single notification
             $notification = $user->notifications()->find($notify_id);
             if ($notification && $notification->unread()) {
                 // markAsRead this method store value to read_at felid in notifications table and covert from unread to read
@@ -36,6 +35,7 @@ class CheckForNotifications
                 // ]);
             }
         }
+
         return $next($request);
     }
 }

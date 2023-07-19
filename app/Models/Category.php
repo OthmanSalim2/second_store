@@ -4,27 +4,36 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class Category extends Model
 {
     use HasFactory;
 
-    public function product()
+    protected static function booted()
     {
-        $this->hasMany(Product::class);
+        static::creating(function (Category $category) {
+            $slug = Str::slug($category->name);
+            $count = Category::where('slug', 'LIKE', "{$slug}%")->count();
+            if ($count > 0) {
+                $slug .= '-' . $count;
+            }
+            $category->slug = $slug;
+        });
     }
 
-    // here category follow just for one parent
+    public function products()
+    {
+        return $this->hasMany(Product::class);
+    }
+
     public function parent()
     {
-        return $this->belongsTo(Category::class, 'parent_id', 'id');
+        return $this->belongsTo(Category::class, 'parent_id', 'id')->withDefault();
     }
 
-    // the one category possible one or more child
     public function children()
     {
-        // I here put withDefault because foreign key possible be nullable
-        return $this->hasMany(Category::class, 'parent_id', 'id')
-            ->withDefault();
+        return $this->hasMany(Category::class, 'parent_id', 'id');
     }
 }

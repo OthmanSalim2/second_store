@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Pivot;
+use Illuminate\Support\Str;
 
 class Cart extends Pivot
 {
@@ -12,8 +13,18 @@ class Cart extends Pivot
 
     protected $table = 'carts';
 
-    // here default int I convert it to string
     protected $keyType = 'string';
+
+    /*protected $with = [
+        'product'
+    ];*/
+
+    protected static function booted()
+    {
+        static::creating(function (Cart $cart) {
+            $cart->id = Str::uuid();
+        });
+    }
 
     public function product()
     {
